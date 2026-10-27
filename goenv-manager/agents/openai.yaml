@@ -1,0 +1,4 @@
+interface:
+  display_name: "Go 环境管理"
+  short_description: "安全安装和维护 Go/Python 版本切换"
+  default_prompt: "使用 $goenv-manager 检查或配置当前主机的 Go/Python 版本自动切换。"

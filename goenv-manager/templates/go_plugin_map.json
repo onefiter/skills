@@ -1,0 +1,381 @@
+{
+    "_managed_by": "goenv-manager:version=0.0.1",
+    "1.19": {
+        "gopls": {
+            "module": "golang.org/x/tools/gopls",
+            "version": "v0.15.3",
+            "url": "golang.org/x/tools/gopls@v0.15.3"
+        },
+        "dlv": {
+            "module": "github.com/go-delve/delve",
+            "version": "v1.21.2",
+            "url": "github.com/go-delve/delve/cmd/dlv@v1.21.2"
+        },
+        "goimports": {
+            "module": "golang.org/x/tools",
+            "version": "v0.16.1",
+            "url": "golang.org/x/tools/cmd/goimports@v0.16.1"
+        },
+        "gofumpt": {
+            "module": "mvdan.cc/gofumpt",
+            "version": "v0.4.0",
+            "url": "mvdan.cc/gofumpt@v0.4.0"
+        },
+        "gotests": {
+            "module": "github.com/cweill/gotests",
+            "version": "v1.6.0",
+            "url": "github.com/cweill/gotests/gotests@v1.6.0"
+        },
+        "impl": {
+            "module": "github.com/josharian/impl",
+            "version": "v1.4.0",
+            "url": "github.com/josharian/impl@v1.4.0"
+        },
+        "goplay": {
+            "module": "github.com/haya14busa/goplay",
+            "version": "v1.0.0",
+            "url": "github.com/haya14busa/goplay/cmd/goplay@v1.0.0"
+        },
+        "staticcheck": {
+            "module": "honnef.co/go/tools",
+            "version": "v0.4.6",
+            "url": "honnef.co/go/tools/cmd/staticcheck@v0.4.6"
+        }
+    },
+    "1.20": {
+        "gopls": {
+            "module": "golang.org/x/tools/gopls",
+            "version": "v0.15.3",
+            "url": "golang.org/x/tools/gopls@v0.15.3"
+        },
+        "dlv": {
+            "module": "github.com/go-delve/delve",
+            "version": "v1.21.2",
+            "url": "github.com/go-delve/delve/cmd/dlv@v1.21.2"
+        },
+        "goimports": {
+            "module": "golang.org/x/tools",
+            "version": "v0.16.1",
+            "url": "golang.org/x/tools/cmd/goimports@v0.16.1"
+        },
+        "gofumpt": {
+            "module": "mvdan.cc/gofumpt",
+            "version": "v0.5.0",
+            "url": "mvdan.cc/gofumpt@v0.5.0"
+        },
+        "gotests": {
+            "module": "github.com/cweill/gotests",
+            "version": "v1.6.0",
+            "url": "github.com/cweill/gotests/gotests@v1.6.0"
+        },
+        "impl": {
+            "module": "github.com/josharian/impl",
+            "version": "v1.4.0",
+            "url": "github.com/josharian/impl@v1.4.0"
+        },
+        "goplay": {
+            "module": "github.com/haya14busa/goplay",
+            "version": "v1.0.0",
+            "url": "github.com/haya14busa/goplay/cmd/goplay@v1.0.0"
+        },
+        "staticcheck": {
+            "module": "honnef.co/go/tools",
+            "version": "v0.4.7",
+            "url": "honnef.co/go/tools/cmd/staticcheck@v0.4.7"
+        }
+    },
+    "1.21": {
+        "gopls": {
+            "module": "golang.org/x/tools/gopls",
+            "version": "v0.16.2",
+            "url": "golang.org/x/tools/gopls@v0.16.2"
+        },
+        "dlv": {
+            "module": "github.com/go-delve/delve",
+            "version": "v1.23.1",
+            "url": "github.com/go-delve/delve/cmd/dlv@v1.23.1"
+        },
+        "goimports": {
+            "module": "golang.org/x/tools",
+            "version": "v0.16.1",
+            "url": "golang.org/x/tools/cmd/goimports@v0.16.1"
+        },
+        "gofumpt": {
+            "module": "mvdan.cc/gofumpt",
+            "version": "v0.6.0",
+            "url": "mvdan.cc/gofumpt@v0.6.0"
+        },
+        "gotests": {
+            "module": "github.com/cweill/gotests",
+            "version": "v1.6.0",
+            "url": "github.com/cweill/gotests/gotests@v1.6.0"
+        },
+        "impl": {
+            "module": "github.com/josharian/impl",
+            "version": "v1.4.0",
+            "url": "github.com/josharian/impl@v1.4.0"
+        },
+        "goplay": {
+            "module": "github.com/haya14busa/goplay",
+            "version": "v1.0.0",
+            "url": "github.com/haya14busa/goplay/cmd/goplay@v1.0.0"
+        },
+        "staticcheck": {
+            "module": "honnef.co/go/tools",
+            "version": "v0.4.7",
+            "url": "honnef.co/go/tools/cmd/staticcheck@v0.4.7"
+        }
+    },
+    "1.22": {
+        "gopls": {
+            "module": "golang.org/x/tools/gopls",
+            "version": "v0.16.2",
+            "url": "golang.org/x/tools/gopls@v0.16.2"
+        },
+        "dlv": {
+            "module": "github.com/go-delve/delve",
+            "version": "v1.24.0",
+            "url": "github.com/go-delve/delve/cmd/dlv@v1.24.0"
+        },
+        "goimports": {
+            "module": "golang.org/x/tools",
+            "version": "v0.18.0",
+            "url": "golang.org/x/tools/cmd/goimports@v0.18.0"
+        },
+        "gofumpt": {
+            "module": "mvdan.cc/gofumpt",
+            "version": "v0.7.0",
+            "url": "mvdan.cc/gofumpt@v0.7.0"
+        },
+        "gotests": {
+            "module": "github.com/cweill/gotests",
+            "version": "v1.6.0",
+            "url": "github.com/cweill/gotests/gotests@v1.6.0"
+        },
+        "impl": {
+            "module": "github.com/josharian/impl",
+            "version": "v1.4.0",
+            "url": "github.com/josharian/impl@v1.4.0"
+        },
+        "goplay": {
+            "module": "github.com/haya14busa/goplay",
+            "version": "v1.0.0",
+            "url": "github.com/haya14busa/goplay/cmd/goplay@v1.0.0"
+        },
+        "staticcheck": {
+            "module": "honnef.co/go/tools",
+            "version": "v0.4.7",
+            "url": "honnef.co/go/tools/cmd/staticcheck@v0.4.7"
+        }
+    },
+    "1.23": {
+        "gopls": {
+            "module": "golang.org/x/tools/gopls",
+            "version": "v0.16.2",
+            "url": "golang.org/x/tools/gopls@v0.16.2"
+        },
+        "dlv": {
+            "module": "github.com/go-delve/delve",
+            "version": "v1.24.2",
+            "url": "github.com/go-delve/delve/cmd/dlv@v1.24.2"
+        },
+        "goimports": {
+            "module": "golang.org/x/tools",
+            "version": "v0.21.0",
+            "url": "golang.org/x/tools/cmd/goimports@v0.21.0"
+        },
+        "gofumpt": {
+            "module": "mvdan.cc/gofumpt",
+            "version": "v0.8.0",
+            "url": "mvdan.cc/gofumpt@v0.8.0"
+        },
+        "gotests": {
+            "module": "github.com/cweill/gotests",
+            "version": "v1.6.0",
+            "url": "github.com/cweill/gotests/gotests@v1.6.0"
+        },
+        "impl": {
+            "module": "github.com/josharian/impl",
+            "version": "v1.5.0",
+            "url": "github.com/josharian/impl@v1.5.0"
+        },
+        "goplay": {
+            "module": "github.com/haya14busa/goplay",
+            "version": "v1.0.0",
+            "url": "github.com/haya14busa/goplay/cmd/goplay@v1.0.0"
+        },
+        "staticcheck": {
+            "module": "honnef.co/go/tools",
+            "version": "v0.5.1",
+            "url": "honnef.co/go/tools/cmd/staticcheck@v0.5.1"
+        }
+    },
+    "1.24": {
+        "gopls": {
+            "module": "golang.org/x/tools/gopls",
+            "version": "v0.17.1",
+            "url": "golang.org/x/tools/gopls@v0.17.1"
+        },
+        "dlv": {
+            "module": "github.com/go-delve/delve",
+            "version": "v1.25.2",
+            "url": "github.com/go-delve/delve/cmd/dlv@v1.25.2"
+        },
+        "goimports": {
+            "module": "golang.org/x/tools",
+            "version": "v0.23.0",
+            "url": "golang.org/x/tools/cmd/goimports@v0.23.0"
+        },
+        "gofumpt": {
+            "module": "mvdan.cc/gofumpt",
+            "version": "v0.9.1",
+            "url": "mvdan.cc/gofumpt@v0.9.1"
+        },
+        "gotests": {
+            "module": "github.com/cweill/gotests",
+            "version": "v1.6.0",
+            "url": "github.com/cweill/gotests/gotests@v1.6.0"
+        },
+        "impl": {
+            "module": "github.com/josharian/impl",
+            "version": "v1.5.0",
+            "url": "github.com/josharian/impl@v1.5.0"
+        },
+        "goplay": {
+            "module": "github.com/haya14busa/goplay",
+            "version": "v1.0.0",
+            "url": "github.com/haya14busa/goplay/cmd/goplay@v1.0.0"
+        },
+        "staticcheck": {
+            "module": "honnef.co/go/tools",
+            "version": "v0.6.1",
+            "url": "honnef.co/go/tools/cmd/staticcheck@v0.6.1"
+        }
+    },
+    "1.25": {
+        "gopls": {
+            "module": "golang.org/x/tools/gopls",
+            "version": "v0.21.1",
+            "url": "golang.org/x/tools/gopls@v0.21.1"
+        },
+        "dlv": {
+            "module": "github.com/go-delve/delve",
+            "version": "v1.26.3",
+            "url": "github.com/go-delve/delve/cmd/dlv@v1.26.3"
+        },
+        "goimports": {
+            "module": "golang.org/x/tools",
+            "version": "v0.24.1",
+            "url": "golang.org/x/tools/cmd/goimports@v0.24.1"
+        },
+        "gofumpt": {
+            "module": "mvdan.cc/gofumpt",
+            "version": "v0.10.0",
+            "url": "mvdan.cc/gofumpt@v0.10.0"
+        },
+        "gotests": {
+            "module": "github.com/cweill/gotests",
+            "version": "v1.6.0",
+            "url": "github.com/cweill/gotests/gotests@v1.6.0"
+        },
+        "impl": {
+            "module": "github.com/josharian/impl",
+            "version": "v1.5.0",
+            "url": "github.com/josharian/impl@v1.5.0"
+        },
+        "goplay": {
+            "module": "github.com/haya14busa/goplay",
+            "version": "v1.0.0",
+            "url": "github.com/haya14busa/goplay/cmd/goplay@v1.0.0"
+        },
+        "staticcheck": {
+            "module": "honnef.co/go/tools",
+            "version": "v0.6.1",
+            "url": "honnef.co/go/tools/cmd/staticcheck@v0.6.1"
+        }
+    },
+    "1.26": {
+        "gopls": {
+            "module": "golang.org/x/tools/gopls",
+            "version": "v0.23.0",
+            "url": "golang.org/x/tools/gopls@v0.23.0"
+        },
+        "dlv": {
+            "module": "github.com/go-delve/delve",
+            "version": "v1.27.2",
+            "url": "github.com/go-delve/delve/cmd/dlv@v1.27.2"
+        },
+        "goimports": {
+            "module": "golang.org/x/tools",
+            "version": "v0.26.0",
+            "url": "golang.org/x/tools/cmd/goimports@v0.26.0"
+        },
+        "gofumpt": {
+            "module": "mvdan.cc/gofumpt",
+            "version": "v0.12.0",
+            "url": "mvdan.cc/gofumpt@v0.12.0"
+        },
+        "gotests": {
+            "module": "github.com/cweill/gotests",
+            "version": "v1.6.0",
+            "url": "github.com/cweill/gotests/gotests@v1.6.0"
+        },
+        "impl": {
+            "module": "github.com/josharian/impl",
+            "version": "v1.5.0",
+            "url": "github.com/josharian/impl@v1.5.0"
+        },
+        "goplay": {
+            "module": "github.com/haya14busa/goplay",
+            "version": "v1.0.0",
+            "url": "github.com/haya14busa/goplay/cmd/goplay@v1.0.0"
+        },
+        "staticcheck": {
+            "module": "honnef.co/go/tools",
+            "version": "v0.8.1",
+            "url": "honnef.co/go/tools/cmd/staticcheck@v0.8.1"
+        }
+    },
+    "1.27": {
+        "gopls": {
+            "module": "golang.org/x/tools/gopls",
+            "version": "v0.23.0",
+            "url": "golang.org/x/tools/gopls@v0.23.0"
+        },
+        "dlv": {
+            "module": "github.com/go-delve/delve",
+            "version": "v1.27.2",
+            "url": "github.com/go-delve/delve/cmd/dlv@v1.27.2"
+        },
+        "goimports": {
+            "module": "golang.org/x/tools",
+            "version": "v0.27.0",
+            "url": "golang.org/x/tools/cmd/goimports@v0.27.0"
+        },
+        "gofumpt": {
+            "module": "mvdan.cc/gofumpt",
+            "version": "v0.12.0",
+            "url": "mvdan.cc/gofumpt@v0.12.0"
+        },
+        "gotests": {
+            "module": "github.com/cweill/gotests",
+            "version": "v1.6.0",
+            "url": "github.com/cweill/gotests/gotests@v1.6.0"
+        },
+        "impl": {
+            "module": "github.com/josharian/impl",
+            "version": "v1.5.0",
+            "url": "github.com/josharian/impl@v1.5.0"
+        },
+        "goplay": {
+            "module": "github.com/haya14busa/goplay",
+            "version": "v1.0.0",
+            "url": "github.com/haya14busa/goplay/cmd/goplay@v1.0.0"
+        },
+        "staticcheck": {
+            "module": "honnef.co/go/tools",
+            "version": "v0.8.1",
+            "url": "honnef.co/go/tools/cmd/staticcheck@v0.8.1"
+        }
+    }
+}

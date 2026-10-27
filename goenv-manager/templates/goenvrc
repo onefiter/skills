@@ -1,0 +1,251 @@
+# Go version manager initialization and project auto-switching.
+# Managed by goenv-manager. Sourcing this file is idempotent, so it can be
+# loaded from interactive, login and non-interactive bash/zsh startup files.
+# That keeps editors which connect over SSH (VS Code Remote, Comate) working,
+# because those sessions do not read ~/.bashrc or ~/.zshrc by default.
+# goenv-manager:version=0.0.1
+
+# Without GOENV_DISABLE_GOPATH, goenv's shim/exec replaces GOPATH with
+# $HOME/go/<version>, so the shell, the shims and the editor settings would
+# disagree about the module cache. Keep one shared GOPATH instead.
+export GOENV_DISABLE_GOPATH=1
+export GOPATH="${GOPATH:-$HOME/go}"
+export GOAUTO_BASE_GOBIN="${GOAUTO_BASE_GOBIN:-${GOBIN:-$HOME/bin}}"
+export GOBIN="$GOAUTO_BASE_GOBIN"
+
+# Optional Go module settings. A value is exported only when the matching
+# GOENV_* variable is set; when unset, Go's own defaults are left untouched.
+# This lets users pin a private proxy or module scope without the skill
+# imposing any default.
+_goenvrc_apply_go_setting() {
+    key=$1
+    value=
+    case "$key" in
+        GO111MODULE) value=${GOENV_GO111MODULE:-} ;;
+        GOPROXY)     value=${GOENV_GOPROXY:-} ;;
+        GOPRIVATE)   value=${GOENV_GOPRIVATE:-} ;;
+        GONOPROXY)   value=${GOENV_GONOPROXY:-} ;;
+        GONOSUMDB)   value=${GOENV_GONOSUMDB:-} ;;
+        *) return 0 ;;
+    esac
+    [ -z "$value" ] && return 0
+    export "$key=$value"
+}
+
+_goenvrc_apply_go_setting GO111MODULE
+_goenvrc_apply_go_setting GOPROXY
+_goenvrc_apply_go_setting GOPRIVATE
+_goenvrc_apply_go_setting GONOPROXY
+_goenvrc_apply_go_setting GONOSUMDB
+
+export GOENV_USER_PREFIX="${GOENV_USER_PREFIX:-$HOME/.local}"
+export PYENV_ROOT="${PYENV_ROOT:-$HOME/.pyenv}"
+export GOENV_ROOT="${GOENV_ROOT:-$HOME/.goenv}"
+export GOENV_BOOTSTRAP_GOBIN="${GOENV_BOOTSTRAP_GOBIN:-$HOME/bin}"
+
+# Split PATH into _GOENVRC_PATH_PARTS for the current shell flavour.
+_goenvrc_split_path() {
+    if [[ -n "$ZSH_VERSION" ]]; then
+        _GOENVRC_PATH_PARTS=("${(@s/:/)PATH}")
+    else
+        IFS=: read -r -a _GOENVRC_PATH_PARTS <<< "$PATH"
+    fi
+}
+
+# Deduplicate _GOENVRC_PATH_PARTS into _GOENVRC_PATH_RESULT, dropping Go tool
+# directories below the optional prefix in $1. Runs without subshells.
+# The glob must stay in the case pattern: zsh treats an expanded variable in a
+# pattern as a literal string, so "$prefix"/1.* is the portable form.
+_goenvrc_join_path() {
+    local entry filtered="" prefix="${1:-}"
+    for entry in "${_GOENVRC_PATH_PARTS[@]}"; do
+        [ -z "$entry" ] && continue
+        if [ -n "$prefix" ]; then
+            case "$entry" in
+                "$prefix"/1.*) continue ;;
+            esac
+        fi
+        case ":$filtered:" in
+            *":$entry:"*) continue ;;
+        esac
+        if [ -z "$filtered" ]; then
+            filtered="$entry"
+        else
+            filtered="$filtered:$entry"
+        fi
+    done
+    _GOENVRC_PATH_RESULT="$filtered"
+}
+
+_goenvrc_refresh_path() {
+    PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$GOENV_ROOT/bin:$GOENV_ROOT/shims:$GOENV_USER_PREFIX/bin:$GOAUTO_BASE_GOBIN:$PATH"
+    _goenvrc_split_path
+    _goenvrc_join_path
+    export PATH="$_GOENVRC_PATH_RESULT"
+}
+
+_goenvrc_refresh_path
+
+goenv() {
+    local command="${1:-}"
+    [ "$#" -gt 0 ] && shift
+    case "$command" in
+        shell|rehash)
+            eval "$("$GOENV_ROOT/bin/goenv" "sh-$command" "$@")"
+            ;;
+        *)
+            command "$GOENV_ROOT/bin/goenv" "$command" "$@"
+            ;;
+    esac
+}
+
+clean_and_set_env() {
+    if [ "$#" -eq 2 ]; then
+        export "$1"="$2"
+    fi
+    _goenvrc_split_path
+    _goenvrc_join_path
+    export PATH="$_GOENVRC_PATH_RESULT"
+}
+
+_goauto_path_without_version_tools() {
+    _goenvrc_split_path
+    _goenvrc_join_path "$GOENV_BOOTSTRAP_GOBIN"
+    printf '%s' "$_GOENVRC_PATH_RESULT"
+}
+
+_goauto_find_root() {
+    local directory="$PWD"
+    while :; do
+        if [[ -f "$directory/go.mod" || -f "$directory/.go-version" ]]; then
+            printf '%s' "$directory"
+            return 0
+        fi
+        [[ "$directory" == "/" ]] && return 1
+        directory="${directory%/*}"
+        [[ -z "$directory" ]] && directory="/"
+    done
+}
+
+_goauto_apply() {
+    local output="" result=0 print_only="" help="" argument
+
+    for argument in "$@"; do
+        case "$argument" in
+            -h|--help) help=1 ;;
+            --export) print_only=1 ;;
+        esac
+    done
+
+    if [ -n "$help" ]; then
+        python3 "$HOME/scripts/goenv_auto.py" "$@"
+        return $?
+    fi
+
+    output="$(GOAUTO_SHELL=1 python3 "$HOME/scripts/goenv_auto.py" --export "$@")"
+    result=$?
+    [ "$result" -ne 0 ] && return "$result"
+    [ -n "$output" ] || return 0
+
+    if [ -n "$print_only" ]; then
+        printf '%s\n' "$output"
+        return 0
+    fi
+
+    # Only evaluate real export statements; never eval arbitrary output.
+    case "$output" in
+        *"export GOAUTO_VERSION="*) ;;
+        *) return 0 ;;
+    esac
+
+    eval "$output"
+    clean_and_set_env
+    return 0
+}
+
+_goauto_reset_env() {
+    export GOBIN="$GOAUTO_BASE_GOBIN"
+    PATH="$(_goauto_path_without_version_tools)"
+    clean_and_set_env
+    unset GOAUTO_VERSION GOAUTO_VERSION_MINOR
+}
+
+goauto() {
+    _goauto_apply "$@"
+}
+
+goinstall() {
+    if [ "$#" -ne 1 ]; then
+        echo "Usage: goinstall <version>" >&2
+        return 2
+    fi
+    _goauto_apply --version "$1" --no-tools
+}
+
+gols() {
+    "$GOENV_ROOT/bin/goenv" versions
+}
+
+_goauto_autorun() {
+    local project_root="" previous_version="${GOAUTO_VERSION:-}" root=""
+
+    root="$(_goauto_find_root 2>/dev/null || true)"
+
+    if [ "${_GOAUTO_ROOT_KNOWN:-0}" = 1 ] && [ "$root" = "${_GOAUTO_ROOT:-}" ]; then
+        return 0
+    fi
+    _GOAUTO_ROOT_KNOWN=1
+    _GOAUTO_ROOT="$root"
+
+    if [ -z "$root" ]; then
+        _goauto_reset_env
+        return 0
+    fi
+
+    command -v python3 >/dev/null 2>&1 || return 0
+
+    if ! _goauto_apply; then
+        _goauto_reset_env
+        return 0
+    fi
+
+    if [ "${GOAUTO_VERSION:-}" != "$previous_version" ]; then
+        echo "[goauto] Using Go $GOAUTO_VERSION for project: $root"
+    fi
+    return 0
+}
+
+_goenvrc_interactive() {
+    if [[ -n "$ZSH_VERSION" ]]; then
+        [[ -o interactive ]]
+    elif [[ -n "$BASH_VERSION" ]]; then
+        case "$-" in
+            *i*) return 0 ;;
+        esac
+        return 1
+    else
+        return 1
+    fi
+}
+
+if _goenvrc_interactive && [ "${GOENVRC_HOOK:-1}" != 0 ]; then
+    if [ "${_GOENVRC_INIT_DONE:-0}" != 1 ]; then
+        if [ -x "$PYENV_ROOT/bin/pyenv" ]; then
+            eval "$("$PYENV_ROOT/bin/pyenv" init -)"
+        fi
+        _GOENVRC_INIT_DONE=1
+    fi
+
+    if [[ -n "$ZSH_VERSION" ]]; then
+        autoload -Uz add-zsh-hook
+        add-zsh-hook -d chpwd _goauto_autorun 2>/dev/null
+        add-zsh-hook chpwd _goauto_autorun
+    elif [[ -n "$BASH_VERSION" ]]; then
+        case "$PROMPT_COMMAND" in
+            *_goauto_autorun*) ;;
+            *) PROMPT_COMMAND="_goauto_autorun; ${PROMPT_COMMAND:-}" ;;
+        esac
+    fi
+
+    _goauto_autorun
+fi

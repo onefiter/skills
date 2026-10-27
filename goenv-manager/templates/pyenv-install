@@ -1,0 +1,161 @@
+#!/bin/sh
+# goenv-manager:version=0.0.1
+set -eu
+
+usage() {
+    echo "Usage: pyenv-install <python-version> [pyenv-install-args...]" >&2
+    echo "Example: pyenv-install 3.10" >&2
+    echo "Set PYENV_INSTALL_MIRRORS to a space-separated list of mirror base URLs" >&2
+    echo "to download the Python source from mirrors before running pyenv install." >&2
+}
+
+version_ge_310() {
+    version=$1
+    old_ifs=$IFS
+    IFS=.
+    set -- $version
+    IFS=$old_ifs
+    major=${1:-0}
+    minor=${2:-0}
+    [ "$major" -gt 3 ] ||
+        { [ "$major" -eq 3 ] && [ "$minor" -ge 10 ]; }
+}
+
+download_file() {
+    url=$1
+    output=$2
+    tmp=$output.tmp.$$
+    rm -f "$tmp"
+    if command -v curl >/dev/null 2>&1; then
+        if curl -fL --connect-timeout 15 --retry 2 "$url" -o "$tmp"; then
+            mv "$tmp" "$output"
+            return 0
+        fi
+    elif command -v wget >/dev/null 2>&1; then
+        if wget -T 15 -O "$tmp" "$url"; then
+            mv "$tmp" "$output"
+            return 0
+        fi
+    else
+        echo "curl or wget is required." >&2
+        exit 1
+    fi
+    rm -f "$tmp"
+    return 1
+}
+
+mirror_url() {
+    base=$1
+    version=$2
+    archive=$3
+    case "$base" in
+        */source)
+            printf '%s\n' "$base/Python-$version/$archive"
+            ;;
+        *)
+            printf '%s\n' "$base/$version/$archive"
+            ;;
+    esac
+}
+
+resolve_version() {
+    requested=$1
+    case "$requested" in
+        *.*.*)
+            printf '%s\n' "$requested"
+            return
+            ;;
+    esac
+
+    pyenv install --list 2>/dev/null |
+        awk -v prefix="$requested." '
+            {
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", $0)
+                if ($0 !~ "^[0-9]+[.][0-9]+[.][0-9]+$") next
+                if (index($0, prefix) != 1) next
+                split($0, parts, ".")
+                patch = parts[3] + 0
+                if (!found || patch > best_patch) {
+                    found = 1
+                    best_patch = patch
+                    best = $0
+                }
+            }
+            END {
+                if (found) print best
+                else exit 1
+            }
+        '
+}
+
+if [ "$#" -lt 1 ]; then
+    usage
+    exit 2
+fi
+
+requested_version=$1
+shift
+
+if ! command -v pyenv >/dev/null 2>&1; then
+    echo "pyenv is required before running pyenv-install." >&2
+    exit 1
+fi
+
+target_version=$(resolve_version "$requested_version") || {
+    echo "Could not resolve Python version from pyenv definitions: $requested_version" >&2
+    exit 1
+}
+
+if ! version_ge_310 "$target_version"; then
+    echo "Python version must be 3.10 or newer: $target_version" >&2
+    exit 1
+fi
+
+# Without PYENV_INSTALL_MIRRORS, delegate straight to pyenv (which downloads
+# from python.org). With mirrors set, download the tarball into pyenv's cache
+# first and let pyenv install from the local cache.
+if [ -z "${PYENV_INSTALL_MIRRORS:-}" ]; then
+    echo "Installing Python $target_version with pyenv."
+    exec pyenv install "$target_version" "$@"
+fi
+
+PYENV_ROOT=${PYENV_ROOT:-$(pyenv root)}
+cache_dir=$PYENV_ROOT/cache
+mkdir -p "$cache_dir"
+
+mirrors=$PYENV_INSTALL_MIRRORS
+downloaded=0
+
+for ext in tar.xz tgz; do
+    archive=Python-$target_version.$ext
+    cache_file=$cache_dir/$archive
+    if [ -s "$cache_file" ]; then
+        downloaded=1
+        break
+    fi
+    for mirror in $mirrors; do
+        url=$(mirror_url "$mirror" "$target_version" "$archive")
+        echo "Downloading $url"
+        if download_file "$url" "$cache_file"; then
+            downloaded=1
+            break
+        fi
+    done
+    [ "$downloaded" -eq 1 ] && break
+done
+
+if [ "$downloaded" -ne 1 ]; then
+    echo "Could not download Python $target_version from configured mirrors." >&2
+    exit 1
+fi
+
+if [ -s "$cache_dir/Python-$target_version.tar.xz" ]; then
+    PYTHON_BUILD_USE_TAR_XZ=1
+    export PYTHON_BUILD_USE_TAR_XZ
+elif [ -s "$cache_dir/Python-$target_version.tgz" ]; then
+    PYTHON_BUILD_USE_TAR_XZ=0
+    export PYTHON_BUILD_USE_TAR_XZ
+fi
+
+echo "Installing Python $target_version with pyenv from local cache."
+exec pyenv install "$target_version" "$@"
