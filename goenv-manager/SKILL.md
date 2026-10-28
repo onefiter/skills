@@ -29,7 +29,10 @@ shell hook、可选模块设置和验证细则见
 - 检查 Git、Python、shell、操作系统、内核和 CPU 架构。
 - 将 Git、pyenv、goenv、Python 和 Go 工具安装到用户目录。
 - 通过 `pyenv-install` 安装 Python，可用 `PYENV_INSTALL_MIRRORS` 指定可选镜像。
-- 根据项目中的 `.go-version` 或 `go.mod` 自动切换 Go 版本。
+- 根据项目中的 `.go-version` 或 `go.mod` 自动切换 Go 版本。`go.mod` 的 `go`
+  版本高于 `.go-version` 时，以 `go.mod` 为准并通过 `goenv local` 重写
+  `.go-version`，同时安装对应 Go、重新校验插件、刷新 `.vscode/settings.json`；
+  shell hook 会监视这两个文件的内容变化，原地修改后下一次提示符即生效。
 - 按 Go 的 `major.minor` 选择插件版本，并校验二进制内嵌模块版本。
 - 按 VS Code Go 扩展推荐清单管理 `gopls`、`dlv`、`goimports`、`gofumpt`、
   `gotests`、`impl`、`goplay` 和 `staticcheck`。

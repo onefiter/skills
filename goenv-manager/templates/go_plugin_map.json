@@ -1,5 +1,5 @@
 {
-    "_managed_by": "goenv-manager:version=0.0.1",
+    "_managed_by": "goenv-manager:version=0.0.2",
     "1.19": {
         "gopls": {
             "module": "golang.org/x/tools/gopls",

@@ -3,7 +3,7 @@
 # loaded from interactive, login and non-interactive bash/zsh startup files.
 # That keeps editors which connect over SSH (VS Code Remote, Comate) working,
 # because those sessions do not read ~/.bashrc or ~/.zshrc by default.
-# goenv-manager:version=0.0.1
+# goenv-manager:version=0.0.2
 
 # Without GOENV_DISABLE_GOPATH, goenv's shim/exec replaces GOPATH with
 # $HOME/go/<version>, so the shell, the shims and the editor settings would
@@ -127,6 +127,27 @@ _goauto_find_root() {
     done
 }
 
+# Fingerprint of the files that decide the Go version: root, first line of
+# .go-version and the go directive of go.mod. Pure shell, no subprocesses, so it
+# is cheap enough to run on every prompt.
+_goauto_signature() {
+    local root="$1" pinned="" required="" line="" key="" value="" rest=""
+    [ -n "$root" ] || return 0
+    if [ -f "$root/.go-version" ]; then
+        IFS= read -r pinned < "$root/.go-version" || true
+    fi
+    if [ -f "$root/go.mod" ]; then
+        while IFS= read -r line || [ -n "$line" ]; do
+            read -r key value rest <<< "$line"
+            if [ "$key" = "go" ]; then
+                required="$value"
+                break
+            fi
+        done < "$root/go.mod"
+    fi
+    printf '%s|%s|%s' "$root" "$pinned" "$required"
+}
+
 _goauto_apply() {
     local output="" result=0 print_only="" help="" argument
 
@@ -187,15 +208,18 @@ gols() {
 }
 
 _goauto_autorun() {
-    local project_root="" previous_version="${GOAUTO_VERSION:-}" root=""
+    local previous_version="${GOAUTO_VERSION:-}" root="" signature=""
 
     root="$(_goauto_find_root 2>/dev/null || true)"
+    signature="$(_goauto_signature "$root")"
 
-    if [ "${_GOAUTO_ROOT_KNOWN:-0}" = 1 ] && [ "$root" = "${_GOAUTO_ROOT:-}" ]; then
+    # Re-run when the project changes or when go.mod/.go-version are edited in
+    # place, so a bumped go directive refreshes .go-version and the tools.
+    if [ "${_GOAUTO_ROOT_KNOWN:-0}" = 1 ] && [ "$signature" = "${_GOAUTO_SIGNATURE:-}" ]; then
         return 0
     fi
     _GOAUTO_ROOT_KNOWN=1
-    _GOAUTO_ROOT="$root"
+    _GOAUTO_SIGNATURE="$signature"
 
     if [ -z "$root" ]; then
         _goauto_reset_env
@@ -208,6 +232,9 @@ _goauto_autorun() {
         _goauto_reset_env
         return 0
     fi
+
+    # goauto may have rewritten .go-version; record the post-update state.
+    _GOAUTO_SIGNATURE="$(_goauto_signature "$root")"
 
     if [ "${GOAUTO_VERSION:-}" != "$previous_version" ]; then
         echo "[goauto] Using Go $GOAUTO_VERSION for project: $root"

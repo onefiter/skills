@@ -1,5 +1,5 @@
 #!/bin/sh
-# goenv-manager:version=0.0.1
+# goenv-manager:version=0.0.2
 set -eu
 
 usage() {

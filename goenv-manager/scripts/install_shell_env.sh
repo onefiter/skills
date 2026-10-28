@@ -1,5 +1,5 @@
 #!/bin/sh
-# goenv-manager:version=0.0.1
+# goenv-manager:version=0.0.2
 #
 # Load ~/.goenvrc from the shell startup files that interactive, login and
 # non-interactive bash/zsh sessions actually read.

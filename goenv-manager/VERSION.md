@@ -1,6 +1,14 @@
 # 版本记录
 
-当前版本：`0.0.1`
+当前版本：`0.0.2`
+
+## 0.0.2
+
+- `.go-version` 动态更新：`go.mod` 的 `go` 版本高于 `.go-version` 时以
+  `go.mod` 为准，通过 `goenv local` 重写 `.go-version`，并同步安装对应 Go、
+  按新 `major.minor` 校验/重装插件、刷新 `.vscode/settings.json`。
+- shell hook 同时监视 `.go-version` 与 `go.mod` 内容，原地修改后下一次提示符
+  即触发更新，不再只在切换目录时触发。
 
 ## 0.0.1
 

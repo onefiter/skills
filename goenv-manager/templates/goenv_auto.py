@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# goenv-manager:version=0.0.1
+# goenv-manager:version=0.0.2
 """Install and automatically select Go versions with goenv."""
 
 import argparse
@@ -77,22 +77,53 @@ def find_project_root(start=None):
     return None
 
 
-def version_from_files(root):
-    version_file = root / ".go-version"
-    if version_file.exists():
-        lines = version_file.read_text(encoding="utf-8").splitlines()
-        if lines:
-            value = normalize(lines[0])
-            if value:
-                return value
+def version_key(version):
+    """Sortable tuple; a missing patch counts as 0 (go.mod `go 1.25` is 1.25.0)."""
+    parts = [int(part) for part in version.split(".")]
+    return tuple(parts + [0] * (3 - len(parts)))
 
+
+def read_go_version_file(root):
+    version_file = root / ".go-version"
+    if not version_file.is_file():
+        return None
+    try:
+        lines = version_file.read_text(encoding="utf-8").splitlines()
+    except OSError as exc:
+        log(f"Could not read {version_file}: {exc}", "WARN")
+        return None
+    return normalize(lines[0]) if lines else None
+
+
+def read_go_mod_version(root):
     go_mod = root / "go.mod"
-    if go_mod.exists():
-        for line in go_mod.read_text(encoding="utf-8").splitlines():
-            fields = line.split()
-            if len(fields) >= 2 and fields[0] == "go":
-                return normalize(fields[1])
+    if not go_mod.is_file():
+        return None
+    try:
+        lines = go_mod.read_text(encoding="utf-8").splitlines()
+    except OSError as exc:
+        log(f"Could not read {go_mod}: {exc}", "WARN")
+        return None
+    for line in lines:
+        fields = line.split()
+        if len(fields) >= 2 and fields[0] == "go":
+            return normalize(fields[1])
     return None
+
+
+def version_from_files(root):
+    """Pick the Go version for a project.
+
+    go.mod's `go` directive is the minimum toolchain the module needs, so a
+    .go-version below it is stale. In that case go.mod wins and the caller
+    rewrites .go-version (through `goenv local`) and everything derived from it.
+    """
+    pinned = read_go_version_file(root)
+    required = read_go_mod_version(root)
+    if pinned and required and version_key(pinned) < version_key(required):
+        log(f".go-version ({pinned}) is older than go.mod ({required}); using {required}")
+        return required
+    return pinned or required
 
 
 def latest_patch(major_minor):
